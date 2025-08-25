@@ -1,73 +1,61 @@
-# Weather Impact on Flight Delays (ETL → Airflow → Spark)
+# Weather Impact on Flight Delays ✈️🌦️
 
-A two-phase portfolio project:
-1) **Baseline ETL + Airflow**: ingest flights (Kaggle CSV) and weather (OpenWeather API) into MySQL/Postgres, then build a joined table.
-2) **Spark Upgrade**: scale the same pipeline with PySpark and compute aggregations.
+**Goal:** Analyze how weather conditions impact flight delays by integrating flight data with hourly weather data.
 
-## Repository Structure
-```
-weather_flight_delay/
-├─ airflow/
-│  └─ dags/
-│     └─ flight_weather_dag.py
-├─ configs/
-│  ├─ db.example.env
-│  ├─ openweather.env.example
-│  └─ airports.csv
-├─ data/
-│  ├─ raw/         # Put Kaggle flights CSV here (e.g., flights_2018.csv)
-│  └─ processed/   # Cleaned artifacts
-├─ etl/
-│  ├─ common/
-│  │  ├─ db.py
-│  │  └─ utils.py
-│  ├─ flights/
-│  │  └─ extract_transform_load.py
-│  └─ weather/
-│     └─ extract_transform_load.py
-├─ spark/
-│  └─ jobs/
-│     └─ join_and_agg.py
-├─ requirements.txt
-└─ README.md
-```
+---
 
-## Quickstart
+## 🔹 Tech Stack
+- **Python** (ETL scripts)
+- **MySQL** (data storage)
+- **Spark** (batch processing, joins)
+- (Optional) Airflow (orchestration)
 
-### 1) Python environment
-```bash
+---
+
+## 🔹 Project Flow
+```mermaid
+flowchart LR
+A[Flights CSVs] -->|ETL| B[(airline_db.flights)]
+C[Weather API/CSV] -->|ETL| D[(weather_db.weather_hourly)]
+B --> E[v_flight_weather]
+D --> E
+E --> F[Analysis / Insights]
+
+🔹 How to Run
+
+Setup environment
+
 python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 cp configs/db.example.env .env
-cp configs/openweather.env.example .env.openweather
-```
 
-### 2) Configure credentials
-Edit **.env** to point to your DB, and **.env.openweather** to set the API key.
 
-### 3) Add data
-- Put a Kaggle flights CSV into `data/raw/` (e.g., `data/raw/flights_2018.csv`).
-- `configs/airports.csv` contains airport-code → lat/lon mappings used for weather lookups. Add more as needed.
+Setup MySQL schemas
 
-### 4) Run ETL locally (baseline)
-```bash
-python etl/flights/extract_transform_load.py --csv data/raw/flights_2018.csv
-python etl/weather/extract_transform_load.py --date 2018-01-01 --airport JFK
-```
-> The weather script supports repeated runs per day/airport. Add a simple loop or use Airflow to orchestrate.
+Run sql/schema_airline_db.sql
 
-### 5) Airflow (optional at this stage)
-Use `airflow/dags/flight_weather_dag.py` as a reference DAG that calls these scripts. (You can plug this into your existing Docker-based Airflow setup.)
+Run sql/schema_weather_db.sql
 
-### 6) Spark upgrade
-Use `spark/jobs/join_and_agg.py` to read from MySQL via JDBC and produce joined/aggregated outputs.
+Run ETL scripts
 
----
+python etl/flights/extract_transform_load.py
+python etl/weather/extract_transform_load.py
 
-## Portfolio Notes
-- Start with Baseline ETL to get results quickly.
-- Then show scalability with the Spark job and add two or three meaningful aggregations:
-  - Delay minutes vs. precipitation/wind bins
-  - Weather sensitivity by airport
-  - Seasonal effect on average delay
+
+Create integrated view
+
+-- sql/create_view_v_flight_weather.sql
+
+🔹 Output
+
+View: v_flight_weather
+
+Example: Flights joined with weather conditions (rain_1h_mm, snow_1h_mm, wind_speed_ms, etc.)
+
+🔹 Future Enhancements
+
+Airport-wise dashboards
+Delay KPIs per weather condition
+Airflow DAG orchestration
+Spark optimization for big data
