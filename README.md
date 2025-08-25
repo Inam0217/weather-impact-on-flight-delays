@@ -170,9 +170,6 @@ ORDER BY avg_delay DESC;
 
 ---
 
-
-### 📌 So your **Assets section** should look like this:
-```markdown
 ## 🖼️ Assets
 
 - ![ETL Flow](assets/etl_flow.png)
@@ -187,6 +184,7 @@ flowchart LR
   B --> E[v_flight_weather]
   D --> E
   E --> F[Analysis / Insights]
+```
 
 ---
 
