@@ -171,8 +171,6 @@ ORDER BY avg_delay DESC;
 ---
 
 
----
-
 ### 📌 So your **Assets section** should look like this:
 ```markdown
 ## 🖼️ Assets
