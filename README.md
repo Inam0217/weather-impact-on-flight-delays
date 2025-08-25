@@ -172,9 +172,8 @@ ORDER BY avg_delay DESC;
 
 ## 🖼️ Assets
 
-Add:
-- `assets/etl_flow.png` – pipeline diagram (or keep the Mermaid diagram below)
-- `assets/sample_output.png` – a screenshot from `v_flight_weather`
+- ![ETL Flow](assets/etl_flow.png)
+- ![Sample Output](assets/sample_output.png)
 
 Mermaid diagram (GitHub renders it):
 
@@ -185,7 +184,6 @@ flowchart LR
   B --> E[v_flight_weather]
   D --> E
   E --> F[Analysis / Insights]
-```
 
 ---
 
